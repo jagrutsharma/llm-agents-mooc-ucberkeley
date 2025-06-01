@@ -1,0 +1,160 @@
+## Example: min function
+
+```lean
+-- Code for finding the minimum of two integers
+def myMin (a : Int) (b : Int) : Int :=
+  if a ≤ b then a else b
+
+-- Proof for the specification
+theorem myMin_spec_satisfied (a : Int) (b : Int) :
+  (myMin a b = a ∧ a ≤ b) ∨ (myMin a b = b ∧ b < a) := by
+  unfold myMin
+  by_cases h : a ≤ b
+  · left
+    simp [h]
+  · right
+    simp [h]
+    have h' : b < a := by
+      apply lt_of_not_ge
+      exact h
+    exact ⟨rfl, h'⟩
+```
+
+## Example: min of three function
+
+```lean
+-- Code for finding the minimum of three integers
+def minOfThree (a : Int) (b : Int) (c : Int) : Int :=
+  if a ≤ b ∧ a ≤ c then a
+  else if b ≤ a ∧ b ≤ c then b
+  else c
+
+-- Proof for the specification
+theorem minOfThree_spec_satisfied (a : Int) (b : Int) (c : Int) :
+  (minOfThree a b c ≤ a) ∧ (minOfThree a b c ≤ b) ∧ (minOfThree a b c ≤ c) ∧ 
+  ((minOfThree a b c = a) ∨ (minOfThree a b c = b) ∨ (minOfThree a b c = c)) := by
+  unfold minOfThree
+  by_cases h1 : a ≤ b ∧ a ≤ c
+  · simp [h1]
+    have h_a_le_b : a ≤ b := h1.left
+    have h_a_le_c : a ≤ c := h1.right
+    exact ⟨le_refl a, h_a_le_b, h_a_le_c, Or.inl rfl⟩
+  · simp [h1]
+    by_cases h2 : b ≤ a ∧ b ≤ c
+    · simp [h2]
+      have h_b_le_a : b ≤ a := h2.left
+      have h_b_le_c : b ≤ c := h2.right
+      exact ⟨h_b_le_a, le_refl b, h_b_le_c, Or.inr (Or.inl rfl)⟩
+    · simp [h2]
+      have h_not_a_le : ¬(a ≤ b ∧ a ≤ c) := h1
+      have h_not_b_le : ¬(b ≤ a ∧ b ≤ c) := h2
+      have h_c_le_a : c ≤ a := by
+        by_contra h
+        have h' : a ≤ c := lt_of_not_ge h
+        have h_a_not_le_b : ¬(a ≤ b) := by
+          by_contra h''
+          apply h_not_a_le
+          exact ⟨h'', h'⟩
+        have h_b_le_a : b ≤ a := by
+          apply le_of_not_gt
+          by_contra h''
+          have h_a_le_b : a ≤ b := h''
+          contradiction
+        have h_b_not_le_c : ¬(b ≤ c) := by
+          by_contra h''
+          apply h_not_b_le
+          exact ⟨h_b_le_a, h''⟩
+        have h_c_le_b : c ≤ b := by
+          apply le_of_not_gt
+          by_contra h''
+          have h_b_le_c : b ≤ c := h''
+          contradiction
+        have h_c_le_c : c ≤ c := le_refl c
+        have h_a_le_c' : a ≤ c := h'
+        have h_b_le_c' : b ≤ c := h_c_le_b
+        exact absurd h_a_le_c' h_not_a_le
+      have h_c_le_b : c ≤ b := by
+        by_contra h
+        have h' : b ≤ c := lt_of_not_ge h
+        have h_b_not_le_a : ¬(b ≤ a) := by
+          by_contra h''
+          apply h_not_b_le
+          exact ⟨h'', h'⟩
+        have h_a_le_b : a ≤ b := by
+          apply le_of_not_gt
+          by_contra h''
+          have h_b_le_a : b ≤ a := h''
+          contradiction
+        have h_a_not_le_c : ¬(a ≤ c) := by
+          by_contra h''
+          apply h_not_a_le
+          exact ⟨h_a_le_b, h''⟩
+        have h_c_le_a : c ≤ a := by
+          apply le_of_not_gt
+          by_contra h''
+          have h_a_le_c : a ≤ c := h''
+          contradiction
+        exact absurd h' h_b_not_le_a
+      exact ⟨h_c_le_a, h_c_le_b, le_refl c, Or.inr (Or.inr rfl)⟩
+```
+
+## Example: isDivisible
+
+```lean
+-- Code for checking if a number is divisible by another
+def isDivisible (n : Int) (m : Int) : Bool :=
+  decide (n % m = 0)
+
+-- Proof for the specification
+theorem isDivisible_spec (n : Int) (m : Int) :
+  (n % m = 0) ↔ (isDivisible n m) := by
+  unfold isDivisible
+  simp [decide_eq_true_iff]
+```
+
+## Example: isDivisibleBy11 with exact proof
+
+```lean
+-- Code for checking if a number is divisible by 11
+def isDivisibleBy11 (n : Int) : Bool :=
+  decide (n % 11 = 0)
+
+-- Proof for the specification showing exactly how to prove it
+theorem isDivisibleBy11_spec_satisfied (n : Int) :
+  (n % 11 = 0) ↔ (isDivisibleBy11 n) := by
+  unfold isDivisibleBy11
+  simp [decide_eq_true_iff]  -- This is the key line that makes the proof work
+```
+
+## Example: Verification Error Handling with decide
+
+```lean
+-- Common error in decide proofs
+def isEven (n : Int) : Bool :=
+  decide (n % 2 = 0)
+
+-- Error in proof
+theorem isEven_spec_wrong (n : Int) :
+  (n % 2 = 0) ↔ (isEven n) := by
+  unfold isEven
+  -- This is incomplete and will cause an error
+  rfl
+
+-- Correct proof
+theorem isEven_spec_correct (n : Int) :
+  (n % 2 = 0) ↔ (isEven n) := by
+  unfold isEven
+  simp [decide_eq_true_iff]
+```
+
+## Example: Other decide proofs
+
+```lean
+def isZero (n : Int) : Bool :=
+  decide (n = 0)
+
+theorem isZero_spec (n : Int) :
+  (n = 0) ↔ (isZero n) := by
+  unfold isZero
+  simp [decide_eq_true_iff]
+```

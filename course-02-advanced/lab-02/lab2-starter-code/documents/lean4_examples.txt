@@ -1,0 +1,281 @@
+-- EXAMPLE: Simple function implementation and proof with nat
+def add_one (n : Nat) : Nat :=
+  n + 1
+
+def add_one_spec (n : Nat) (result : Nat) : Prop :=
+  result = n + 1
+
+theorem add_one_spec_satisfied (n : Nat) :
+  add_one_spec n (add_one n) := by
+  unfold add_one add_one_spec
+  rfl
+<EOC>
+
+-- EXAMPLE: Min of two numbers implementation and proof
+def min_two (a : Int) (b : Int) : Int :=
+  if a <= b then a else b
+
+def min_two_spec (a : Int) (b : Int) (result : Int) : Prop :=
+  (result <= a ∧ result <= b) ∧ (result = a ∨ result = b)
+
+theorem min_two_spec_satisfied (a : Int) (b : Int) :
+  min_two_spec a b (min_two a b) := by
+  unfold min_two min_two_spec
+  by_cases h : a <= b
+  · simp [h]
+    constructor
+    · constructor
+      · exact h
+      · apply le_refl
+    · left
+      rfl
+  · simp [h]
+    constructor
+    · constructor
+      · apply le_refl
+      · apply not_le.mp h
+    · right
+      rfl
+<EOC>
+
+-- EXAMPLE: List functions
+def list_length (l : List α) : Nat :=
+  match l with
+  | [] => 0
+  | _ :: xs => 1 + list_length xs
+
+def list_length_spec (l : List α) (result : Nat) : Prop :=
+  result = l.length
+
+theorem list_length_spec_satisfied (l : List α) :
+  list_length_spec l (list_length l) := by
+  unfold list_length list_length_spec
+  induction l with
+  | nil => rfl
+  | cons x xs ih =>
+    simp [list_length]
+    simp [List.length]
+    rw [ih]
+<EOC>
+
+-- EXAMPLE: Boolean operations
+def bool_and (a : Bool) (b : Bool) : Bool :=
+  match a with
+  | true => b
+  | false => false
+
+def bool_and_spec (a : Bool) (b : Bool) (result : Bool) : Prop :=
+  result = (a && b)
+
+theorem bool_and_spec_satisfied (a : Bool) (b : Bool) :
+  bool_and_spec a b (bool_and a b) := by
+  unfold bool_and bool_and_spec
+  cases a
+  · simp
+  · simp
+<EOC>
+
+-- EXAMPLE: Max of three numbers
+def max_of_three (a : Int) (b : Int) (c : Int) : Int :=
+  if a >= b && a >= c then a
+  else if b >= a && b >= c then b
+  else c
+
+def max_of_three_spec (a : Int) (b : Int) (c : Int) (result : Int) : Prop :=
+  (result >= a ∧ result >= b ∧ result >= c) ∧ (result = a ∨ result = b ∨ result = c)
+
+theorem max_of_three_spec_satisfied (a : Int) (b : Int) (c : Int) :
+  max_of_three_spec a b c (max_of_three a b c) := by
+  unfold max_of_three max_of_three_spec
+  by_cases h1 : a >= b ∧ a >= c
+  · simp [h1]
+    constructor
+    · exact h1
+    · left; rfl
+  · simp [h1]
+    by_cases h2 : b >= a ∧ b >= c
+    · simp [h2]
+      constructor
+      · exact h2
+      · right; left; rfl
+    · simp [h2]
+      constructor
+      · constructor
+        · simp; by_cases ha : a >= c
+          · have : ¬(a >= b) := by
+            apply not_and_of_not.mp h1
+            intro h; exact h
+            exact ha
+          · have : c > a := by
+            apply not_le.mp
+            exact ha
+            apply lt_trans
+            exact this
+            apply not_le.mp
+            apply not_and_of_not.mp h2
+            intro h; exact h
+        · simp; by_cases hb : b >= c
+          · have : ¬(b >= a) := by
+            apply not_and_of_not.mp h2
+            intro h; exact h
+            exact hb
+          · have : c > b := by
+            apply not_le.mp
+            exact hb
+            apply lt_of_le_of_lt
+            apply le_refl
+            exact this
+        · apply le_refl
+      · right; right; rfl
+<EOC>
+
+-- EXAMPLE: Sorting a list of two elements
+def sort_two (a : Int) (b : Int) : List Int :=
+  if a <= b then [a, b] else [b, a]
+
+def sort_two_spec (a : Int) (b : Int) (result : List Int) : Prop :=
+  (result.length = 2) ∧ 
+  ((result.get ⟨0, by simp⟩) <= (result.get ⟨1, by simp⟩)) ∧
+  (a ∈ result) ∧ (b ∈ result)
+
+theorem sort_two_spec_satisfied (a : Int) (b : Int) :
+  sort_two_spec a b (sort_two a b) := by
+  unfold sort_two sort_two_spec
+  by_cases h : a <= b
+  · simp [h]
+    constructor
+    · rfl
+    · constructor
+      · exact h
+      · constructor
+        · apply List.mem_cons_self
+        · apply List.mem_cons_of_mem
+          apply List.mem_singleton_self
+  · simp [h]
+    constructor
+    · rfl
+    · constructor
+      · apply not_le.mp h
+      · constructor
+        · apply List.mem_cons_of_mem
+          apply List.mem_singleton_self
+        · apply List.mem_cons_self
+<EOC>
+
+-- EXAMPLE: Computing factorial
+def factorial (n : Nat) : Nat :=
+  match n with
+  | 0 => 1
+  | n+1 => (n+1) * factorial n
+
+def factorial_spec (n : Nat) (result : Nat) : Prop :=
+  match n with
+  | 0 => result = 1
+  | n+1 => result = (n+1) * factorial n
+
+theorem factorial_spec_satisfied (n : Nat) :
+  factorial_spec n (factorial n) := by
+  unfold factorial factorial_spec
+  cases n
+  · rfl
+  · rfl
+<EOC>
+
+-- EXAMPLE: Identity function
+def identity (x : α) : α :=
+  x
+
+def identity_spec (x : α) (result : α) : Prop :=
+  result = x
+
+theorem identity_spec_satisfied (x : α) :
+  identity_spec x (identity x) := by
+  unfold identity identity_spec
+  rfl
+<EOC>
+
+-- EXAMPLE: Absolute value function
+def abs_val (x : Int) : Int :=
+  if x >= 0 then x else -x
+
+def abs_val_spec (x : Int) (result : Int) : Prop :=
+  result >= 0 ∧ (result = x ∨ result = -x)
+
+theorem abs_val_spec_satisfied (x : Int) :
+  abs_val_spec x (abs_val x) := by
+  unfold abs_val abs_val_spec
+  by_cases h : x >= 0
+  · simp [h]
+    constructor
+    · exact h
+    · left; rfl
+  · simp [h]
+    constructor
+    · apply neg_nonneg_of_nonpos
+      apply le_of_not_ge
+      exact h
+    · right; rfl
+<EOC>
+
+-- EXAMPLE: Checking if a number is even
+def is_even (n : Nat) : Bool :=
+  n % 2 = 0
+
+def is_even_spec (n : Nat) (result : Bool) : Prop :=
+  result = true ↔ n % 2 = 0
+
+theorem is_even_spec_satisfied (n : Nat) :
+  is_even_spec n (is_even n) := by
+  unfold is_even is_even_spec
+  constructor
+  · intro h; exact h
+  · intro h; exact h
+<EOC>
+
+-- EXAMPLE: Minimum of three values
+def min_of_three (a : Int) (b : Int) (c : Int) : Int :=
+  if a <= b && a <= c then a
+  else if b <= a && b <= c then b
+  else c
+
+def min_of_three_spec (a : Int) (b : Int) (c : Int) (result : Int) : Prop :=
+  (result <= a ∧ result <= b ∧ result <= c) ∧ (result = a ∨ result = b ∨ result = c)
+
+theorem min_of_three_spec_satisfied (a : Int) (b : Int) (c : Int) :
+  min_of_three_spec a b c (min_of_three a b c) := by
+  unfold min_of_three min_of_three_spec
+  by_cases h1 : a <= b ∧ a <= c
+  · simp [h1]
+    constructor
+    · constructor
+      · apply le_refl
+      · exact h1
+    · left; rfl
+  · simp [h1]
+    by_cases h2 : b <= a ∧ b <= c
+    · simp [h2]
+      constructor
+      · constructor
+        · apply And.right h2
+        · apply le_refl
+        · apply And.right h2
+      · right; left; rfl
+    · simp [h2]
+      constructor
+      · constructor
+        · have : ¬(a <= c) := by
+          apply not_and_of_not.mp h1
+          intro h; exact h.right
+          apply le_trans
+          exact this
+          apply not_le.mp
+          apply not_and_of_not.mp h2
+          intro h; exact h.right
+        · have : ¬(b <= c) := by
+          apply not_and_of_not.mp h2
+          intro h; exact h.right
+          apply le_trans
+          exact this
+          apply le_refl
+        · apply le_refl
+      · right; right; rfl 
