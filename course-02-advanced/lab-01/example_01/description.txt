@@ -1,0 +1,15 @@
+-----Description-----
+This task requires implementing a function that reverses a list in Lean 4. The function should take a list of elements of any type and return a new list with the same elements but in reverse order.
+
+The implementation should handle the base case (empty list) and properly reverse any non-empty list. Additionally, you must prove several important properties of your implementation, including that:
+1. Reversing an empty list returns an empty list
+2. Reversing a list twice returns the original list
+3. The length of the reversed list is the same as the original list
+
+-----Input-----
+The input is a list of elements of any type:
+xs: A List of elements of type α, where α can be any type.
+
+-----Output-----
+The output is a list of the same type:
+Returns a new list containing all elements from the input list but in reverse order.

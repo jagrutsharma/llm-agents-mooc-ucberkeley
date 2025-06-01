@@ -1,0 +1,12 @@
+-----Description-----
+This task requires implementing a function that checks if a string is a palindrome in Lean 4. A palindrome is a string that reads the same forward and backward, ignoring case, spaces, and punctuation.
+
+The implementation should convert the input string to a normalized form (removing spaces, punctuation, and converting to lowercase) and then check if the normalized string equals its reverse.
+
+-----Input-----
+The input is a string:
+s: A String value to check if it's a palindrome.
+
+-----Output-----
+The output is a boolean:
+Returns true if the input string is a palindrome, false otherwise.

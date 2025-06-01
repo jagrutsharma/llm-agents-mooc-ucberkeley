@@ -1,0 +1,32 @@
+[
+    {
+      "input": { "xs": [] },
+      "expected": [],
+      "unexpected": [[1]]
+    },
+    {
+      "input": { "xs": [1] },
+      "expected": [1],
+      "unexpected": []
+    },
+    {
+      "input": { "xs": [1, 2, 3] },
+      "expected": [3, 2, 1],
+      "unexpected": [[1, 2, 3], [3, 1, 2]]
+    },
+    {
+      "input": { "xs": [5, 5, 5] },
+      "expected": [5, 5, 5],
+      "unexpected": [[5, 5]]
+    },
+    {
+      "input": { "xs": [10, 20, 30, 40, 50] },
+      "expected": [50, 40, 30, 20, 10],
+      "unexpected": [[10, 20, 30, 40, 50]]
+    },
+    {
+      "input": { "xs": ["a", "b", "c"] },
+      "expected": ["c", "b", "a"],
+      "unexpected": [["a", "b", "c"]]
+    }
+]

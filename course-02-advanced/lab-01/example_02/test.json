@@ -1,0 +1,62 @@
+[
+  {
+    "input": { "s": "" },
+    "expected": true,
+    "unexpected": [false]
+  },
+  {
+    "input": { "s": "a" },
+    "expected": true,
+    "unexpected": [false]
+  },
+  {
+    "input": { "s": "racecar" },
+    "expected": true,
+    "unexpected": [false]
+  },
+  {
+    "input": { "s": "A man a plan a canal Panama" },
+    "expected": true,
+    "unexpected": [false]
+  },
+  {
+    "input": { "s": "Madam, I'm Adam" },
+    "expected": true,
+    "unexpected": [false]
+  },
+  {
+    "input": { "s": "Never odd or even" },
+    "expected": true,
+    "unexpected": [false]
+  },
+  {
+    "input": { "s": "Was it a car or a cat I saw?" },
+    "expected": true,
+    "unexpected": [false]
+  },
+  {
+    "input": { "s": "hello" },
+    "expected": false,
+    "unexpected": [true]
+  },
+  {
+    "input": { "s": "abc" },
+    "expected": false,
+    "unexpected": [true]
+  },
+  {
+    "input": { "s": "Lean 4" },
+    "expected": false,
+    "unexpected": [true]
+  },
+  {
+    "input": { "s": "Almost a palindrome, emordnilap a tsomla" },
+    "expected": false,
+    "unexpected": [true]
+  },
+  {
+    "input": { "s": "No lemon, no melon" },
+    "expected": true,
+    "unexpected": [false]
+  }
+]
